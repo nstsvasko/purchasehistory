@@ -1,0 +1,46 @@
+imports:
+  - { resource: ../services.yml }
+
+services:
+
+  Tea\PurchaseHistory\Form\Type\PurchaseHistoryTabType:
+    class: Tea\PurchaseHistory\Form\Type\PurchaseHistoryTabType
+    parent: 'form.type.translatable.aware'
+    public: true
+    arguments:
+    tags:
+      - { name: form.type }
+
+  Tea\PurchaseHistory\ReadModel\AbstractReadModel:
+    class: Tea\PurchaseHistory\ReadModel\AbstractReadModel
+    abstract: true
+    public: true
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $databasePrefix: '%database_prefix%'
+
+  Tea\PurchaseHistory\ReadModel\ProductHistory:
+    class: Tea\PurchaseHistory\ReadModel\ProductHistory
+    parent: Tea\PurchaseHistory\ReadModel\AbstractReadModel
+    public: true
+    arguments:
+      $locale: '@PrestaShop\PrestaShop\Core\Localization\LocaleInterface'
+      $currencyRepository: '@PrestaShop\PrestaShop\Adapter\Currency\Repository\CurrencyRepository'
+
+  Tea\PurchaseHistory\Form\Modifier\ProductFormModifier:
+    class: Tea\PurchaseHistory\Form\Modifier\ProductFormModifier
+    autowire: true
+    public: true
+    arguments:
+      $formBuilderModifier: '@form.form_builder_modifier'
+      $readModelProductHistory: '@Tea\PurchaseHistory\ReadModel\ProductHistory'
+      $queryBus: '@prestashop.core.query_bus'
+
+  Tea\PurchaseHistory\Domain\PurchaseHistory\QueryHandler\GetPurchaseHistoryHandler:
+    class: 'Tea\PurchaseHistory\Domain\PurchaseHistory\QueryHandler\GetPurchaseHistoryHandler'
+    public: true
+    arguments:
+      $productHistoryReadModel: '@Tea\PurchaseHistory\ReadModel\ProductHistory'
+    tags:
+      - name: tactician.handler
+        command: 'Tea\PurchaseHistory\Domain\PurchaseHistory\Query\GetPurchaseHistory'

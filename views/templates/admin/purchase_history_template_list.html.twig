@@ -1,0 +1,22 @@
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>{{ 'Order Date Add'|trans({}, 'Modules.Teapurchasehistory.Admin') }}</th>
+        <th>{{ 'Quantity'|trans({}, 'Modules.Teapurchasehistory.Admin') }}</th>
+        <th>{{ 'Product Price TaxExcl'|trans({}, 'Modules.Teapurchasehistory.Admin') }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for key, value in data %}
+        <tr>
+            <td>{{ value.date_add }}</td>
+            <td>{{ value.product_quantity }}</td>
+            <td>{{ value.price_excl }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="3">{{ 'There is no purchase still'|trans({}, 'Modules.Teapurchasehistory.Admin') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
